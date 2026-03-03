@@ -1,29 +1,32 @@
 package com.example.demoj2ee.model;
 
-import lombok.*;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-
 public class Product {
     private int id;
-    @NotBlank(message = "Tên sản phẩm không được để trống")
+
+    @NotBlank(message = "Ten san pham khong duoc de trong")
+    @Size(max = 255, message = "Ten san pham toi da 255 ky tu")
     private String name;
 
-    @Length(min = 0, max = 255, message = "Tên hinh ảnh phải có độ dài từ 0 đến 255 ký tự")
+    @Size(max = 255, message = "Ten hinh anh toi da 255 ky tu")
     private String image;
 
-    @NotNull(message = "Giá sản phẩm không được để trống")
-    @Min(value = 0, message = "Giá sản phẩm phải lớn hơn hoặc bằng 0")
-    @Max(value = 1000000000, message = "Giá sản phẩm phải nhỏ hơn hoặc bằng 1000000000")
-    private long price;
+    @NotNull(message = "Gia san pham khong duoc de trong")
+    @PositiveOrZero(message = "Gia san pham phai lon hon hoac bang 0")
+    @Max(value = 1000000000, message = "Gia san pham phai nho hon hoac bang 1000000000")
+    private Long price;
 
+    @NotNull(message = "Danh muc khong duoc de trong")
     private Category category;
-
 }

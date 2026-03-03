@@ -1,13 +1,16 @@
 package com.example.demoj2ee.model;
 
-import lombok.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Category {
     private int id;
-    @NotBlank(message = "Tên danh mục không được để trống")
+
+    @NotBlank(message = "Ten danh muc khong duoc de trong")
     private String name;
 }

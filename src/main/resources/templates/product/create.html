@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{_layout :: content}">
+<head>
+    <title>Thêm sản phẩm</title>
+</head>
+<body>
+    <h1>Thêm sản phẩm mới</h1>
+    <form th:action="@{/products/create}" method="post" th:object="${product}">
+        <div class="mb-3">
+            <label for="name" class="form-label">Tên sản phẩm</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Hình ảnh (URL)</label>
+            <input type="text" class="form-control" id="image" th:field="*{image}">
+            <div class="text-danger" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Giá</label>
+            <input type="number" class="form-control" id="price" th:field="*{price}" min="0" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">Danh mục</label>
+            <select class="form-select" id="category" th:field="*{category}" required>
+                <option value="">Chọn danh mục</option>
+                <option th:each="cat : ${listCategory}" th:value="${cat}" th:text="${cat.name}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+        <a href="/products" class="btn btn-secondary">Hủy</a>
+    </form>
+</body>
+</html>

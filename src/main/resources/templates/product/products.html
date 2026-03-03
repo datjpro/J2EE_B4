@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{_layout :: content}">
+<head>
+    <title>Danh sách sản phẩm</title>
+</head>
+<body>
+    <h1>Danh sách sản phẩm</h1>
+    <a href="/products/create" class="btn btn-primary mb-3">Thêm sản phẩm mới</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên</th>
+                <th>Hình ảnh</th>
+                <th>Giá</th>
+                <th>Danh mục</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${listProduct}">
+                <td th:text="${product.id}"></td>
+                <td th:text="${product.name}"></td>
+                <td><img th:if="${product.image}" th:src="${product.image}" alt="Hình ảnh" style="width: 50px;"></td>
+                <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'VNĐ')}"></td>
+                <td th:text="${product.category?.name}"></td>
+                <td>
+                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-warning">Sửa</a>
+                    <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
