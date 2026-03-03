@@ -1,7 +1,12 @@
 package com.example.demoj2ee.service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,16 +36,40 @@ public class ProductService {
         if (find != null) {
             find.setPrice(editProduct.getPrice());
             find.setName(editProduct.getName());
-            if(editProduct.getImage() != null) {
+            if (editProduct.getImage() != null) {
                 find.setImage(editProduct.getImage());
             }
         }
     }
 
-    public void updateImage(Product newProduct, MultipartFile imageProduct){
+    public void updateImage(Product newProduct, MultipartFile imageProduct) {
         String contentType = imageProduct.getContentType();
-        if(contentType != null && IllegalArgumentException("Tệp tải lên không phải hình ảnh!");
-        )
+        if (contentType != null && !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Tệp tải lên không phải hình ảnh!");
+        }
+        if (!imageProduct.isEmpty()) {
+            try {
+                Path dirImages = Paths.get("src/main/resources/static/images");
+                if (!Files.exists(dirImages)) {
+                    Files.createDirectories(dirImages);
+                }
+                String newFileName = UUID.randomUUID() + "_" + imageProduct.getOriginalFilename();
+                Path pathFileUpload = dirImages.resolve(newFileName);
+                Files.copy(imageProduct.getInputStream(), pathFileUpload, StandardCopyOption.REPLACE_EXISTING);
+                newProduct.setImage(newFileName);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void delete(int id) {
+        Product find = get(id);
+        if (find != null) {
+            listProduct.remove(find);
+        }
     }
 
 }
