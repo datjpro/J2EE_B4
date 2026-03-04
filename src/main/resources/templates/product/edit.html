@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{_layout :: layout(~{::section}, 'Edit Product')}">
+<section>
+    <div class="mb-3">
+        <h1 class="h3 mb-0">Edit Product</h1>
+        <p class="text-muted mb-0" th:text="'Product ID: ' + ${productId}"></p>
+    </div>
+
+    <form th:action="@{/products/edit/{id}(id=${productId})}" method="post" th:object="${productForm}" enctype="multipart/form-data" class="row g-3">
+        <div class="col-12">
+            <label for="name" class="form-label">Name</label>
+            <input id="name" type="text" class="form-control" th:field="*{name}" placeholder="Product name">
+            <div class="text-danger small" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="price" class="form-label">Price</label>
+            <input id="price" type="number" min="0" class="form-control" th:field="*{price}" placeholder="0">
+            <div class="text-danger small" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="categoryId" class="form-label">Category</label>
+            <select id="categoryId" class="form-select" th:field="*{categoryId}">
+                <option value="">Choose category</option>
+                <option th:each="cat : ${listCategory}" th:value="${cat.id}" th:text="${cat.name}"></option>
+            </select>
+            <div class="text-danger small" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></div>
+        </div>
+
+        <div class="col-12" th:if="${existingImage != null and !existingImage.isBlank()}">
+            <label class="form-label">Current image</label>
+            <div>
+                <img th:src="${#strings.startsWith(existingImage, 'http') ? existingImage : '/images/' + existingImage}" alt="Current image" class="product-thumb">
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label for="imageUrl" class="form-label">New image URL (optional)</label>
+            <input id="imageUrl" type="text" class="form-control" th:field="*{imageUrl}" placeholder="https://...">
+            <div class="form-text">If you enter a URL, it replaces the current image.</div>
+            <div class="text-danger small" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></div>
+        </div>
+
+        <div class="col-12">
+            <label for="imageFile" class="form-label">Upload new image (optional)</label>
+            <input id="imageFile" type="file" class="form-control" th:field="*{imageFile}" accept="image/*">
+            <div class="form-text">Uploaded file has priority over URL.</div>
+            <div class="text-danger small" th:if="${#fields.hasErrors('imageFile')}" th:errors="*{imageFile}"></div>
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a th:href="@{/products}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</section>
+</html>

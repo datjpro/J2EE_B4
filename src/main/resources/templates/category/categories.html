@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{_layout :: layout(~{::section}, 'Category List')}">
+<section>
+    <div class="mb-3">
+        <h1 class="h3 mb-0">Category List</h1>
+        <p class="text-muted mb-0">Current categories and the number of products in each.</p>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Products</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(listCategory)}">
+                <td colspan="3" class="text-center text-muted py-4">No categories found.</td>
+            </tr>
+            <tr th:each="cat : ${listCategory}">
+                <td th:text="${cat.id}"></td>
+                <td th:text="${cat.name}"></td>
+                <td th:text="${productCountByCategory[cat.id]}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</html>

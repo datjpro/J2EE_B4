@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demoj2ee.model.Product;
 
 @Service
 public class ProductService {
-    List<Product> listProduct = new ArrayList<>();
+    private final List<Product> listProduct = new ArrayList<>();
 
     public List<Product> getAll() {
         return listProduct;
@@ -26,8 +27,8 @@ public class ProductService {
     }
 
     public void add(Product newProduct) {
-        int maxID = listProduct.stream().mapToInt(Product::getId).max().orElse(0);
-        newProduct.setId(maxID + 1);
+        int maxId = listProduct.stream().mapToInt(Product::getId).max().orElse(0);
+        newProduct.setId(maxId + 1);
         listProduct.add(newProduct);
     }
 
@@ -36,33 +37,37 @@ public class ProductService {
         if (find != null) {
             find.setPrice(editProduct.getPrice());
             find.setName(editProduct.getName());
-            if (editProduct.getImage() != null) {
+            find.setCategory(editProduct.getCategory());
+            if (editProduct.getImage() != null && !editProduct.getImage().isBlank()) {
                 find.setImage(editProduct.getImage());
             }
         }
     }
 
     public void updateImage(Product newProduct, MultipartFile imageProduct) {
+        if (imageProduct == null || imageProduct.isEmpty()) {
+            return;
+        }
+
         String contentType = imageProduct.getContentType();
         if (contentType != null && !contentType.startsWith("image/")) {
-            throw new IllegalArgumentException("Tệp tải lên không phải hình ảnh!");
+            throw new IllegalArgumentException("File upload phai la hinh anh.");
         }
-        if (!imageProduct.isEmpty()) {
-            try {
-                Path dirImages = Paths.get("src/main/resources/static/images");
-                if (!Files.exists(dirImages)) {
-                    Files.createDirectories(dirImages);
-                }
-                String newFileName = UUID.randomUUID() + "_" + imageProduct.getOriginalFilename();
-                Path pathFileUpload = dirImages.resolve(newFileName);
-                Files.copy(imageProduct.getInputStream(), pathFileUpload, StandardCopyOption.REPLACE_EXISTING);
-                newProduct.setImage(newFileName);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            Path dirImages = Paths.get("src/main/resources/static/images");
+            if (!Files.exists(dirImages)) {
+                Files.createDirectories(dirImages);
             }
-        }
 
+            String originalFileName = StringUtils.cleanPath(imageProduct.getOriginalFilename());
+            String newFileName = UUID.randomUUID() + "_" + originalFileName;
+            Path pathFileUpload = dirImages.resolve(newFileName);
+            Files.copy(imageProduct.getInputStream(), pathFileUpload, StandardCopyOption.REPLACE_EXISTING);
+            newProduct.setImage(newFileName);
+        } catch (Exception e) {
+            throw new RuntimeException("Khong the luu hinh anh.", e);
+        }
     }
 
     public void delete(int id) {
@@ -72,4 +77,9 @@ public class ProductService {
         }
     }
 
+    public long countByCategoryId(int categoryId) {
+        return listProduct.stream()
+                .filter(p -> p.getCategory() != null && p.getCategory().getId() == categoryId)
+                .count();
+    }
 }
